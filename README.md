@@ -1,2 +1,2 @@
 # Education
-Home work
+Мy homework during my training as a computer engineer
