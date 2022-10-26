@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="mysql-connector-java-8.0">
+    <CLASSES>
+      <root url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27/src/build/java" />
+      <root url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27/src/demo/java" />
+      <root url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27/src/generated/java" />
+      <root url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27/src/legacy/java" />
+      <root url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27/src/main/core-api/java" />
+      <root url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27/src/main/core-impl/java" />
+      <root url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27/src/main/protocol-impl/java" />
+      <root url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27/src/main/user-api/java" />
+      <root url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27/src/main/user-impl/java" />
+      <root url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27/src/test/java" />
+    </SOURCES>
+    <jarDirectory url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.27" recursive="false" />
+  </library>
+</component>
