@@ -1,0 +1,101 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head"></head>
+<body>
+<div class="wrapper">
+    <header th:replace="fragments/header"></header>
+
+    <input type="hidden" name="routeId" id="routeId" th:value="${route.id}">
+    <div class="details-main" th:object="${route}">
+        <section class="route-info text-center">
+            <h4 id="track-name" th:text="*{name}"></h4>
+            <p>Total distance: <span id="totalDistance"></span> km</p>
+            <p>Author name: <span id="authorName" th:text="${authorName}"></span></p>
+            <h4>Difficulty Level (1-3):</h4>
+            <div class="level">
+                <p><img class="level-img" src="/images/difficulty-level.png" alt=""></p>
+                <p><img class="level-img" src="/images/difficulty-level.png" alt=""></p>
+                <p><img class="level-img" src="/images/difficulty-level.png" alt=""></p>
+                
+            </div>
+            <div>
+                <h4>Choose picture</h4>
+                <form action="/" method="POST" enctype="multipart/form-data">
+                    <input  type="hidden" id="id" name="routeId">
+                    <div class="form-group">
+                        <label>
+                            <input type="text" name="title">
+                        </label>
+                    </div>
+                    <div class="image-upload">
+                        <label for="picture">
+                            <img src="/images/add-img.png" alt=""/>
+                        </label>
+                        <input style="display: none" id="picture" type="file" name="picture"/>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn-primary rounded">Upload Picture</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <section id="map"></section>
+        <section id="video">
+            <iframe id="frame"  th:src="@{https://www.youtube.com/embed/{videoId}(videoId=*{videoUrl})}">
+            </iframe>
+        </section>
+        <section class="route-description" th:text="*{description}">
+        </section>
+        <section class="gallery">
+            <img th:each="pictureUrl : *{picturesUrls}" class="rounded" th:src="${pictureUrl}" height="100%" alt="">
+        </section>
+        <section class="comments">
+            <h1>Comments</h1>
+
+            <div>
+                <!-- Comments submission -->
+                <form id="commentForm" method="POST"
+                      action="/">
+                    <div class="form-group">
+                        <h4>Leave a comment</h4>
+                        <label for="message">Message</label>
+                        <textarea name="message"
+                                  id="message"
+                                  cols="30"
+                                  rows="5"
+                                  class="form-control"
+                                  style="background-color: white;"></textarea>
+                        <small id="messageError" class="invalid-feedback">
+                            Message should be at least 10 characters.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit"
+                               class="btn"
+                               id="postComment"
+                               value="Post Comment"/>
+                    </div>
+                </form>
+                <!-- Comments submission -->
+            </div>
+
+            <!-- All comments section -->
+            <div>
+
+                <span id="commentCtnr"><!-- Comments section, filled in by script --></span>
+            </div>
+            <!-- EO: All comments section -->
+        </section>
+        <p style="visibility: hidden">GPX Download: <a id="gpxDownload"></a></p>
+    </div>
+<!--    Scripts: track and comments -->
+<!--    <script th:src="@{/js/track.js}"></script>-->
+    <script th:src="@{/js/comments.js}"></script>
+
+</div>
+<footer th:replace="fragments/footer"></footer>
+<script th:src="comments.js"></script>
+</body>
+</html>

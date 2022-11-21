@@ -1,0 +1,30 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head"></head>
+<body>
+<div class="wrapper">
+    <!-- Navigation -->
+    <header th:replace="fragments/header"></header>
+
+
+    <section class="road" th:each="r : ${routes}" th:object="${r}">
+        <img th:src="*{thumbnailUrl}" alt="Title image">
+        <div>
+            <h2 th:text="*{name}">Your Route</h2>
+            <p th:text="*{description}">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae alias reiciendis deleniti possimus nemo
+                non repellendus?
+                Quae atque vero modi quidem! Autem cupiditate fugit doloribus ad amet, asperiores provident commodi.</p>
+            <a th:href="@{/routes/details/{id}(id=*{id})}" class="btn">Learn More</a>
+        </div>
+    </section>
+</div>
+<!-- Wrapper Ends -->
+</body>
+<footer class="footer bg-blur rounded">
+    <div class="container-fluid text-center">
+        <div class="h5 text-white">
+            &copy; Lucho, Chocho & Spring Advanced Students 2021. All rights reserved.
+        </div>
+    </div>
+</footer>
+</html>

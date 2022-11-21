@@ -1,0 +1,22 @@
+<nav class="main-nav"
+     xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+    <ul>
+        <li>
+            <a href="/static">Add new route</a>
+        </li>
+        <li>
+            <a href="/users/profile">Profile</a>
+        </li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a href="/static">Admin</a>
+        </li>
+        <li>
+            <form action="/users/logout" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit">Logout</button>
+            </form>
+        </li>
+    </ul>
+</nav>
