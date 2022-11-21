@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+      <meta charset="UTF-8">
+    <title>MobiLeLeLe</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+    <script src="/js/jquery-3.5.1.slim.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+<div th:replace="fragments/navbar">Navbar</div>
+
+<div class="container">
+    <h2 class="text-center text-white">Register User</h2>
+    <form th:action="@{/users/register}"
+          th:method="post"
+          th:object="${userModel}"
+          class="main-form mx-auto col-md-8 d-flex flex-column justify-content-center">
+        <div class="row">
+            <div class="form-group col-md-6 mb-3">
+                <label for="firstName" class="text-white font-weight-bold">First Name</label>
+                <input
+                        id="firstName"
+                        th:field="*{firstName}"
+                        th:errorclass="is-invalid"
+                        type="text"
+                            class="form-control"
+                       placeholder="First name"/>
+                <p class="invalid-feedback errors alert alert-danger">
+                    First name is required and should be between 2 and 20 symbols.
+                </p>
+            </div>
+            <div class="form-group col-md-6 mb-3">
+                <label for="lastName" class="text-white font-weight-bold">Last Name</label>
+                <input id="lastName"
+                       th:field="*{lastName}"
+                       th:errorclass="is-invalid"
+                       type="text"
+                       class="form-control"
+                       placeholder="Last name"/>
+                <p class="invalid-feedback errors alert alert-danger">
+                    Last name is required and should be between 2 and 20 symbols..
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6 mb-3">
+                <label for="email" class="text-white font-weight-bold">Email</label>
+                <input id="email"
+                       th:field="*{email}"
+                       th:errorclass="is-invalid"
+                       type="text"
+                       class="form-control"
+                       placeholder="Email"/>
+                <div class="invalid-feedback errors alert alert-danger">
+                    <div
+                        th:each="err : ${#fields.errors('email')}"
+                        th:text="${err}"
+                    />
+                </div>
+            </div>
+            <div class="form-group col-md-6 mb-3">
+                <label for="password" class="text-white font-weight-bold">Password</label>
+                <input id="password"
+                       th:field="*{password}"
+                       th:errorclass="is-invalid"
+                       type="password"
+                       class="form-control"
+                       placeholder="Password"/>
+                <p class="invalid-feedback errors alert alert-danger">
+                    Password should match.
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword" class="text-white font-weight-bold">Password</label>
+            <input id="confirmPassword"
+                   th:field="*{confirmPassword}"
+                   th:errorclass="is-invalid"
+                   type="password"
+                   class="form-control"
+                   placeholder="Password"/>
+            <p class="errors alert alert-danger">
+                Password should match.
+            </p>
+        </div>
+
+        <div class="row">
+            <div class="col col-md-4">
+                <div class="button-holder d-flex">
+                    <input type="submit" class="btn btn-info btn-lg" value="Register"/>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div>
+     <footer> </footer>
+</div>
+
+</body>
+</html>

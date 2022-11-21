@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1 th:text="#{registration_welcome}">Welcome to Mobile!</h1>
+    <th:block th:text="#{registration_dear_user(${userName})}">Dear Pesho</th:block>
+    <p th:text="#{registration_happy}">
+        We are happy that are part of our community now!
+    </p>
+    <th:block th:text="#{registration_best_regards}">Best Mobile, team</th:block>
+</body>
+</html>

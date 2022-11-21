@@ -1,0 +1,24 @@
+﻿spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: never
+
+  security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            client-id: your-client-id-here
+            client-secret: your-secret-here
+
+
+mail:
+  host: "localhost"
+  port: 1025
+  username: "mobile@mobile.com"
+  password: "123456"
+

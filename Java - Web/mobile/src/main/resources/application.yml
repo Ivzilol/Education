@@ -1,0 +1,49 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mobile?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
+    username: root
+    password: bbGGbb1234
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+#  mvc:
+#    hiddenmethod:
+#      filter:
+#        enabled: true
+
+  sql:
+    init:
+      mode: always
+  security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            client-id: your-client-id-here
+            client-secret: your-secret-here
+
+mail:
+  host: "localhost"
+  port: 1025
+  username: "mobile@mobile.com"
+  password: ""
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: "*"
+
+
+
+
+# logging:
+#  level:
+#      org.hibernate.SQL: DEBUG
+#      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+
