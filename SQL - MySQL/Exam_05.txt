@@ -1,0 +1,167 @@
+create table addresses
+(
+    id   int primary key auto_increment,
+    name varchar(50) not null
+);
+
+create table categories
+(
+    id   int primary key auto_increment,
+    name varchar(10) not null
+);
+
+create table offices
+(
+    id                 int primary key auto_increment,
+    workspace_capacity int not null,
+    website            varchar(50),
+    address_id         int not null,
+    constraint fk_offices_addresses
+        foreign key (address_id)
+            references addresses (id)
+);
+
+create table employees
+(
+    id              int primary key auto_increment,
+    first_name      varchar(30)    not null,
+    last_name       varchar(30)    not null,
+    age             int            not null,
+    salary          decimal(10, 2) not null,
+    job_title       varchar(20)    not null,
+    happiness_level char(1)        not null
+);
+
+create table teams
+(
+    id        int primary key auto_increment,
+    name      varchar(40) not null,
+    office_id int         not null,
+    constraint fk_teams_offices
+        foreign key (office_id)
+            references offices (id),
+    leader_id int         not null,
+    constraint fk_teams_employees
+        foreign key (leader_id)
+            references employees (id)
+);
+
+create table games
+(
+    id           int primary key auto_increment,
+    name         varchar(50) unique not null,
+    description  TEXT,
+    rating       float              not null,
+    budget       decimal(10, 2)     not null,
+    release_date DATE,
+    team_id      int                not null,
+    constraint fk_games_teams
+        foreign key (team_id)
+            references teams (id)
+);
+
+create table games_categories
+(
+    game_id     int not null,
+    foreign key (game_id)
+        references games (id),
+    category_id int not null,
+    foreign key (category_id)
+        references categories (id)
+);
+
+-- 2
+
+insert into games (name, rating, budget, team_id)
+SELECT reverse(lower(substring(t.name, 2))),
+       t.id,
+       t.leader_id * 1000,
+       t.id
+from teams as t
+where id >= 1
+  AND id <= 9;
+
+-- 3
+
+update employees
+set salary = salary + 1000
+where age < 40
+  and salary <= 5000;
+
+-- 4
+
+select g.name, g.release_date, c.name
+from games AS g
+         join games_categories gc on g.id = gc.game_id
+         join categories c on c.id = gc.category_id;
+
+delete
+from games
+where release_date IS NULL;
+
+-- 5
+
+select first_name, last_name, age, salary, happiness_level
+from employees
+order by salary, id;
+
+-- 6
+
+select t.name AS team_name, a.name AS address_name, length(a.name) AS 'count_of_characters'
+from teams AS t
+         Join offices AS o on t.office_id = o.id
+         join addresses a on a.id = o.address_id
+where website is not null
+order by team_name, address_name;
+
+-- 7
+
+select c.name,
+       count(c.id)                           AS games_count,
+       cast(avg(g.budget) as decimal(10, 2)) AS avg_budget,
+       max(g.rating)                         AS max_rating
+FROM categories AS c
+         join games_categories gc on c.id = gc.category_id
+         join games g on g.id = gc.game_id
+group by c.name
+having max_rating >= 9.5
+order by games_count desc, c.name;
+
+-- 8
+
+select g.name,
+       (g.release_date),
+       concat(left(g.description, 10), '...') AS summary,
+       (CASE
+            when ((g.release_date) <= '2022-03-31') THEN 'Q1'
+            when ((g.release_date) <= '2022-06-30') THEN 'Q2'
+            when ((g.release_date) <= '2022-09-30') THEN 'Q3'
+            else 'Q4' END)                    AS quarter,
+       t.name                                 AS team_name
+from games AS g
+         join teams t on g.team_id = t.id
+where month(g.release_date) % 2 = 0
+  and year(g.release_date) = 2022
+  and right(g.name, 1) = 2
+order by quarter;
+
+-- 9
+
+select g.name,
+       (IF(g.budget < 50000, 'Normal budget', 'Insufficient budget')
+           )  as budget_level,
+       t.name AS team_name,
+       a.name AS address_name
+from addresses AS a
+         join offices o on a.id = o.address_id
+         join teams t on o.id = t.office_id
+         join games g on t.id = g.team_id
+         left join games_categories gc on g.id = gc.game_id
+         left join categories c on gc.category_id = c.id
+where release_date is null
+  and gc.category_id is null
+order by g.name;
+
+
+
+
