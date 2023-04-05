@@ -96,4 +96,16 @@ public class ToyStoryTest {
         Assert.assertEquals(1, toyStore.getToyShelf().values().stream().filter(Objects::nonNull).count());
 
     }
+    
+    @Test
+    public void removeToySuccessful2() throws OperationNotSupportedException {
+        Toy i = new Toy("TestOwner", "TestItem");
+        Toy i2 = new Toy("TestOwner", "TestItem2");
+        toyStore.addToy("A", i);
+        toyStore.addToy("B", i2);
+       String result =  toyStore.removeToy("B", i2);
+        long exist = toyStore.getToyShelf().values().stream().filter(Objects::nonNull).count();
+        Assert.assertEquals(1, exist);
+        Assert.assertEquals("Remove toy:TestItem2 successfully!", result);
+    }
 }
