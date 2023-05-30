@@ -1,0 +1,181 @@
+create database restaurant_db;
+
+-- 1
+
+create table products
+(
+    id    int primary key auto_increment,
+    name  varchar(30)    not null unique,
+    type  varchar(30)    not null,
+    price decimal(10, 2) not null
+);
+
+create table clients
+(
+    id         int primary key auto_increment,
+    first_name varchar(50) not null,
+    last_name  varchar(50) not null,
+    birthdate  date        not null,
+    card       varchar(50),
+    review     text
+);
+
+create table tables
+(
+    id       int primary key auto_increment,
+    floor    int not null,
+    reserved boolean,
+    capacity int not null
+);
+
+create table waiters
+(
+    id         int primary key auto_increment,
+    first_name varchar(50) not null,
+    last_name  varchar(50) not null,
+    email      varchar(50) not null,
+    phone      varchar(50),
+    salary     decimal(10, 2)
+);
+
+create table orders
+(
+    id           int primary key auto_increment,
+    table_id     int,
+    constraint fk_orders_tables
+        foreign key (table_id)
+            references tables (id),
+    waiter_id    int,
+    constraint fk_orders_waiters
+        foreign key (waiter_id)
+            references waiters (id),
+    order_time   time not null,
+    payed_status boolean
+);
+
+create table orders_clients
+(
+    order_id  int,
+    constraint orders_clients_orders
+        foreign key (order_id)
+            references orders (id),
+    client_id int,
+    constraint orders_clients_clients
+        foreign key (client_id)
+            references clients (id)
+);
+
+create table orders_products
+(
+    order_id   int,
+    constraint orders_products_clients
+        foreign key (order_id)
+            references orders (id),
+    product_id int,
+    constraint orders_products_products
+        foreign key (product_id)
+            references products (id)
+);
+
+-- 2
+
+insert into products(name, type, price)
+select CONCAT(w.last_name, ' ', 'specialty'),
+       'Cocktail',
+       ceiling(w.salary / 100)
+from waiters as w
+where w.id > 6;
+
+-- 3
+
+update orders
+set table_id = table_id - 1
+where id >= 12
+  and id <= 23;
+
+-- 4
+
+delete
+from waiters
+where id not in (select distinct(waiter_id) from orders);
+
+-- 5
+
+select *
+from clients as c
+order by c.birthdate desc, c.id desc;
+
+-- 6
+
+select c.first_name, c.last_name, c.birthdate, c.review
+from clients as c
+where c.card is null
+  and c.birthdate BETWEEN '1978-01-01' AND '1993-01-01'
+order by c.last_name desc, c.id
+limit 5;
+
+-- 7
+
+select CONCAT(w.last_name, w.first_name, character_length(w.first_name), 'Restaurant') AS 'username',
+       reverse(substr(w.email, 2, 12))                                                 as "password"
+from waiters as w
+where w.salary > 0
+order by password desc;
+
+-- 8
+
+SELECT p.id, p.name, COUNT(op.product_id) AS count
+FROM products AS p
+         LEFT JOIN orders_products AS op ON p.id = op.product_id
+GROUP BY p.name
+HAVING count >= 5
+ORDER BY count DESC, p.name;
+
+-- 9
+
+SELECT t.id                AS 'table_id',
+       t.capacity,
+       COUNT(oc.client_id) AS 'count_clients',
+       (CASE
+            WHEN count(oc.client_id) > t.capacity THEN 'Extra seats'
+            WHEN count(oc.client_id) < t.capacity THEN 'Free seats'
+            WHEN count(oc.client_id) = t.capacity THEN 'Full'
+           END)            AS 'availability'
+FROM tables AS t
+         JOIN orders AS o ON t.id = o.table_id
+         JOIN orders_clients AS oc ON oc.order_id = o.id
+WHERE t.floor = 1
+GROUP BY o.table_id
+ORDER BY t.id DESC;
+
+-- 10
+
+DELIMITER $$
+CREATE FUNCTION udf_client_bill(full_name VARCHAR(50))
+    RETURNS DECIMAL(19, 2)
+    DETERMINISTIC
+BEGIN
+    DECLARE bill DECIMAL(19, 2);
+    SET bill := (SELECT SUM(p.price)
+                 FROM clients AS c
+                          JOIN orders_clients AS oc ON c.id = oc.client_id
+                          JOIN orders AS o ON oc.order_id = o.id
+                          JOIN orders_products AS op ON o.id = op.order_id
+                          JOIN products AS p ON op.product_id = p.id
+                 WHERE CONCAT(c.first_name, ' ', last_name) = full_name);
+    RETURN bill;
+END$$
+
+
+-- 11
+
+DELIMITER $$
+CREATE PROCEDURE udp_happy_hour(type VARCHAR(50))
+BEGIN
+    START TRANSACTION;
+    UPDATE products AS p1
+    SET p1.price = p1.price * 0.8
+    WHERE p1.type = type
+      AND p1.price >= 10;
+    COMMIT;
+END$$
