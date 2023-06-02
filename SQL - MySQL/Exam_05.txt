@@ -162,6 +162,43 @@ where release_date is null
   and gc.category_id is null
 order by g.name;
 
+-- 10
+
+DELIMITER $$
+create function udf_game_info_by_name(game_name VARCHAR(20))
+    returns TEXT
+    deterministic
+begin
+    return (select concat('The', ' ', g.name, ' ', 'is developed by a', ' ', t.name, ' ',
+                          'in an office with an address', ' ', a.name)
+            from games as g
+                     join teams t on t.id = g.team_id
+                     join offices o on o.id = t.office_id
+                     join addresses a on a.id = o.address_id
+            where g.name = game_name);
+end
+$$
+delimiter ;
+select udf_game_info_by_name('Fix San') as info;
+SELECT udf_game_info_by_name('Bitwolf') AS info;
+
+-- 11
+
+DELIMITER $$
+create procedure udp_update_budget(min_game_rating float)
+begin
+    update games g
+        left join games_categories gc on g.id = gc.game_id
+    set g.budget       = g.budget + 100000,
+        g.release_date = DATE_ADD(g.release_date, interval 1 year)
+    where g.rating > min_game_rating
+      and gc.category_id is null
+      and g.release_date is not null;
+END $$
+delimiter ;
+
+CALL udp_update_budget(8);
+
 
 
 
