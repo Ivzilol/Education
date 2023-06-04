@@ -1,0 +1,213 @@
+-- 1
+
+create table pictures
+(
+    id       int primary key auto_increment,
+    url      varchar(100) not null,
+    added_on datetime     not null
+);
+
+create table categories
+(
+    id   int primary key auto_increment,
+    name varchar(40) not null unique
+);
+
+create table products
+(
+    id          int primary key auto_increment,
+    name        varchar(40)    not null unique,
+    best_before date,
+    price       decimal(10, 2) not null,
+    description TEXT,
+    category_id int            not null,
+    constraint fk_products_categories
+        foreign key (category_id)
+            references categories (id),
+    picture_id  int            not null,
+    constraint fk_products_pictures
+        foreign key (picture_id)
+            references pictures (id)
+);
+
+create table towns
+(
+    id   int primary key auto_increment,
+    name varchar(20) not null unique
+);
+
+create table addresses
+(
+    id      int primary key auto_increment,
+    name    varchar(50) not null unique,
+    town_id int         not null,
+    constraint fk_addresses_towns
+        foreign key (town_id)
+            references towns (id)
+);
+
+create table stores
+(
+    id          int primary key auto_increment,
+    name        varchar(20) not null unique,
+    rating      float       not null,
+    has_parking boolean default false,
+    address_id  int         not null,
+    constraint fk_stores_addresses
+        foreign key (address_id)
+            references addresses (id)
+);
+
+create table products_stores
+(
+    product_id int not null,
+    constraint fk_products_stores_products
+        foreign key (product_id)
+            references products (id),
+    store_id   int not null,
+    constraint fk_products_stores_stores
+        foreign key (store_id)
+            references stores (id),
+    primary key (product_id, store_id)
+);
+
+create table employees
+(
+    id          int primary key auto_increment,
+    first_name  varchar(15)    not null,
+    middle_name char(1),
+    last_name   varchar(20)    not null,
+    salary      decimal(19, 2) not null default 0,
+    hire_date   date           not null,
+    manager_id  int,
+    constraint fk_employees_employees
+        foreign key (manager_id)
+            references employees (id),
+    store_id    int            not null,
+    constraint fk_employees_stores
+        foreign key (store_id)
+            references stores (id)
+);
+
+-- 2
+
+insert into products_stores(product_id, store_id)
+select p.id,
+       1
+from products as p
+         left join products_stores ps on p.id = ps.product_id
+where ps.store_id is null;
+
+-- 3
+
+update employees as e
+    join stores s on s.id = e.store_id
+set e.first_name  = 'Carolyn',
+    e.middle_name = 'Q',
+    e.last_name   = 'Dyett',
+    e.manager_id  = 3,
+    e.salary      = e.salary - 500
+where YEAR(e.hire_date) > 2003
+  and s.name != 'Cardguard'
+  and s.name != 'Veribet';
+
+-- 4
+
+delete e
+from employees as e
+where e.manager_id is not null
+  and e.salary >= 6000;
+
+-- 5
+
+select e.first_name, e.middle_name, e.last_name, e.salary, e.hire_date
+from employees as e
+order by hire_date desc;
+
+-- 6
+
+select p.name as product_name, p.price, p.best_before, concat(substring(p.description, 1, 10), '...'), p2.url
+from products as p
+         join pictures p2 on p2.id = p.picture_id
+where character_length(p.description) > 100
+  and year(p2.added_on) < 2019
+  and p.price > 20
+order by p.price desc;
+
+-- 7
+
+select s.name, count(ps.product_id) as product_count, cast(avg(p.price) as decimal(10, 2)) as avg
+from stores as s
+         left join products_stores ps on s.id = ps.store_id
+         left join products p on p.id = ps.product_id
+group by s.id
+order by product_count desc, avg desc, s.id;
+
+-- 8
+
+select concat(e.first_name, ' ', e.last_name) as Full_name, s.name as Store_name, a.name as address, e.salary
+from employees as e
+         join stores s on s.id = e.store_id
+         join addresses a on a.id = s.address_id
+where e.salary < 4000
+  and a.name LIKE '%5%'
+  and character_length(s.name) > 8
+  and e.last_name LIKE '%n';
+
+-- 9
+
+select reverse(s.name)                    as reversed_name,
+       concat(upper(t.name), '-', a.name) as full_address,
+       COUNT(e.store_id)                  as employees_count
+from stores as s
+         join addresses a on a.id = s.address_id
+         join towns t on t.id = a.town_id
+         left join employees e on s.id = e.store_id
+where e.store_id > 0
+group by s.name
+order by full_address;
+
+-- 10
+
+DELIMITER $$
+create function udf_top_paid_employee_by_store(store_name VARCHAR(50))
+    returns TEXT
+    deterministic
+begin
+    return (select concat(s.first_name, ' ', s.middle_name, '.', ' ', s.last_name, ' works in store for ',
+                          2020 - year(s.hire_date), ' years')
+            from employees as s
+                     join stores s2 on s2.id = s.store_id
+            where s2.name = store_name
+            order by s.salary desc
+            limit 1);
+end $$
+delimiter ;
+
+SELECT udf_top_paid_employee_by_store('Stronghold') as 'full_info';
+SELECT udf_top_paid_employee_by_store('Keylex') as 'full_info';
+
+-- 11
+
+DELIMITER $$
+CREATE PROCEDURE udp_update_product_price(address_name VARCHAR(50))
+BEGIN
+    DECLARE increase_level INT;
+    if address_name LIKE '0%' THEN
+        SET increase_level = 100;
+    else
+        SET increase_level = 200;
+    end if;
+    UPDATE products AS p
+    SET price = price + increase_level
+    WHERE p.id IN (SELECT ps.product_id
+                   FROM addresses AS a
+                            JOIN stores AS s ON a.id = s.address_id
+                            JOIN products_stores AS ps ON ps.store_id = s.id
+                   WHERE a.name = address_name);
+END$$
+
+DELIMITER ;
+
+CALL udp_update_product_price('07 Armistice Parkway');
+CALL udp_update_product_price('1 Cody Pass');
