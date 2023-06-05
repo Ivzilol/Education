@@ -1,0 +1,166 @@
+-- 1
+
+create table branches
+(
+    id   int primary key auto_increment,
+    name varchar(30) not null unique
+);
+
+create table employees
+(
+    id         int primary key auto_increment,
+    first_name varchar(20)    not null,
+    last_name  varchar(20)    not null,
+    salary     decimal(10, 2) not null,
+    started_on date           not null,
+    branch_id  int            not null,
+    constraint fk_employees_branches
+        foreign key (branch_id)
+            references branches (id)
+);
+
+create table clients
+(
+    id        int primary key auto_increment,
+    full_name varchar(50) not null,
+    age       int         not null
+);
+
+create table employees_clients
+(
+    employee_id int,
+    constraint fk_employees_clients_employees
+        foreign key (employee_id)
+            references employees (id),
+    client_id   int,
+    constraint fk_employees_clients_clients
+        foreign key (client_id)
+            references clients (id)
+);
+
+create table bank_accounts
+(
+    id             int primary key auto_increment,
+    account_number varchar(10)    not null,
+    balance        decimal(10, 2) not null,
+    client_id      int            not null unique,
+    constraint fk_bank_accounts_clients
+        foreign key (client_id)
+            references clients (id)
+);
+
+create table cards
+(
+    id              int primary key auto_increment,
+    card_number     varchar(19) not null,
+    card_status     varchar(7)  not null,
+    bank_account_id int         not null,
+    constraint fk_cards_bank_accounts
+        foreign key (bank_account_id)
+            references bank_accounts (id)
+);
+
+-- 2
+
+insert into cards(card_number, card_status, bank_account_id)
+select reverse(c.full_name),
+       'Active',
+       c.id
+from clients as c
+where c.id >= 191
+  and c.id <= 200;
+
+-- 3
+
+update employees_clients as ec
+set employee_id = (select ecc.employee_id
+                   from (select * from employees_clients) as ecc
+                   group by ecc.employee_id
+                   order by count(ecc.client_id), ecc.employee_id
+                   limit 1)
+where ec.employee_id = ec.client_id;
+
+-- 4
+
+delete e
+from employees as e
+         left join employees_clients ec on e.id = ec.employee_id
+where ec.client_id is null;
+
+-- 5
+
+select c.id, c.full_name
+from clients as c
+order by c.id;
+
+-- 6
+
+select e.id, concat(e.first_name, ' ', e.last_name) as full_name, concat('$', e.salary) as salary, e.started_on
+from employees as e
+where e.salary >= 100000
+  and year(e.started_on) > 2017
+order by e.salary desc, e.id desc;
+
+-- 7
+
+select c.id, concat(c.card_number, ' : ', c2.full_name) as card_token
+from cards as c
+         join bank_accounts ba on ba.id = c.bank_account_id
+         join clients c2 on c2.id = ba.client_id
+order by c.id desc;
+
+
+-- 8
+
+select concat(e.first_name, ' ', e.last_name) as name, e.started_on, count(ec.client_id) as count_of_clients
+from employees as e
+         left join employees_clients ec on e.id = ec.employee_id
+group by e.id
+order by count_of_clients desc, e.id
+limit 5;
+
+-- 9
+
+select b.name, count(c2.id) as count_of_cards
+from branches as b
+         left join employees e on b.id = e.branch_id
+         left join employees_clients ec on e.id = ec.employee_id
+         left join clients c on ec.client_id = c.id
+         left join bank_accounts ba on c.id = ba.client_id
+         left join cards c2 on ba.id = c2.bank_account_id
+group by b.name
+order by count_of_cards desc, b.name;
+
+-- 10
+
+DELIMITER $$
+create function udf_client_cards_count(name VARCHAR(30))
+    returns TEXT
+    deterministic
+begin
+    return (select count(c2.id) as count_of_cards
+            from clients as c
+                     join bank_accounts ba on c.id = ba.client_id
+                     join cards c2 on ba.id = c2.bank_account_id
+            where c.full_name = name);
+end $$
+delimiter ;
+
+SELECT c.full_name, udf_client_cards_count('Baxy David') as `cards`
+FROM clients c
+WHERE c.full_name = 'Baxy David';
+
+-- 11
+
+DELIMITER $$
+create procedure `udp_clientinfo`(full_name varchar(50))
+begin
+    select c.full_name, c.age, ba.account_number, concat('$', ba.balance)
+    from clients as c
+             join bank_accounts ba on c.id = ba.client_id
+    where c.full_name = full_name;
+end $$
+
+delimiter ;
+
+call udp_clientinfo('Hunter Wesgate');
