@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/commons::head"></head>
+<body>
+<header th:replace="fragments/commons::nav"></header>
+<main>
+    <h1 class="text-center mt-2"><span class="badge badge-pill badge-dark">Add song</span></h1>
+    <hr class="hr-3 w-25 bg-white"/>
+
+    <form class="mx-auto w-25 bg-blur rounded"
+          method="post"
+          action="/songs/add-song"
+          th:object="${addSongDTO}"
+    >
+
+        <div class="form-group">
+            <div class="label-holder text-white textCol d-flex justify-content-center">
+                <label for="performer" class="h4 mb-2">Performer</label>
+            </div>
+            <input  th:field="*{performer}"
+                    th:errorclass="'is-invalid bg-danger'"
+                    type="text"
+                    class="form-control"
+                    id="performer"
+                    name="performer"/>
+            <small
+                    th:if="${#fields.hasErrors('performer')}"
+                    th:errors="*{performer}"
+            >Performer error message</small>
+        </div>
+
+        <div class="form-group">
+            <div class="label-holder textCol d-flex justify-content-center">
+                <label for="title" class="h4 mb-2 text-white">Title</label>
+            </div>
+            <input  th:field="*{title}"
+                    th:errorclass="'is-invalid bg-danger'"
+                    type="text"
+                    class="form-control"
+                    id="title"
+                    name="title"/>
+            <small
+                    th:if="${#fields.hasErrors('title')}"
+                    th:errors="*{title}"
+            >Title error</small>
+        </div>
+
+        <div class="form-group">
+            <div class="label-holder text-white textCol d-flex justify-content-center">
+                <label for="releaseDate" class="h4 mb-2">Release date</label>
+            </div>
+            <input
+                    th:field="*{releaseDate}"
+                    th:errorclass="'is-invalid bg-danger'"
+                    type="date"
+                    class="form-control"
+                    id="releaseDate"
+                    name="releaseDate"/>
+            <small
+                    th:if="${#fields.hasErrors('releaseDate')}"
+                    th:errors="*{releaseDate}"
+            >Release date error</small>
+        </div>
+
+        <div class="form-group">
+            <div class="label-holder text-white textCol d-flex justify-content-center">
+                <label for="duration" class="h4 mb-2">Duration in seconds</label>
+            </div>
+            <input
+                    th:field="*{duration}"
+                    th:errorclass="'is-invalid bg-danger'"
+                    type="number"
+                    step="1"
+                    class="form-control"
+                    id="duration"
+                    name="duration"/>
+            <small
+                    th:if="${#fields.hasErrors('duration')}"
+                    th:errors="*{duration}"
+            >Duration error message</small>
+        </div>
+
+        <div class="form-group">
+            <div class="text-white label-holder d-flex justify-content-center">
+                <label for="style" class="h4 mb-2">Style</label>
+            </div>
+
+            <select
+                    th:field="*{style}"
+                    th:errorclass="'is-invalid bg-danger'"
+                    class="browser-default custom-select"
+                    id="style"
+                    name="style">
+                <option value="">Select style</option>
+                <option value="POP">Pop</option>
+                <option value="ROCK">Rock</option>
+                <option value="JAZZ">Jazz</option>
+            </select>
+
+            <small
+                    th:if="${#fields.hasErrors('style')}"
+                    th:errors="*{style}"
+            >Style error message</small>
+        </div>
+
+        <div class="button-holder d-flex justify-content-center">
+            <button type="submit" class="btn btn-warning  mb-3" value="Register">Add song</button>
+        </div>
+
+    </form>
+</main>
+<footer th:replace="fragments/commons::footer"></footer>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/commons::head"></head>
+<body>
+<header th:replace="fragments/commons::nav"></header>
+<main>
+    <div class="container bg-blur rounded mt-5 ">
+        <h1>Welcome to Spotify Playlist App</h1>
+        <hr class="my-3 bg-white w-50"/>
+
+        <p class="h4">The application is here for your music taste and aims to make music a more social
+            experience. In Spotify Playlist, you can find hundreds of new songs that people had discovered and
+            then you can add them to your own customized playlist or maybe add your favourite songs so other people can
+            listen to them.
+            You can find new musical experiences by searching
+            for styles of music you prefer.</p>
+        <hr class="my-3 bg-white w-75"/>
+
+        <h3>
+            <a class="text-primary" href="/">Login</a>
+            if you have an account or
+            <a class="text-primary" href="/">Register</a>
+            now and check our deals.
+        </h3>
+    </div>
+</main>
+<footer th:replace="fragments/commons::footer"></footer>
+</body>
+</html>
