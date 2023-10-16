@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Shopping list App</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg bg-nav rounded">
+        <a class="nav-link text-white active h5" href="/">Shopping List App</a>
+        <a class="nav-link text-white active h5" href="/">Add Product</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
+            <ul class="navbar-nav row">
+                <li class="nav-item col-md-4">
+                    <a class="nav-link text-white active h5" href="/">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<main>
+    <h1 class="text-center mt-2"><span class="badge badge-pill badge-dark">Add product</span></h1>
+    <hr class="hr-3 w-25 bg-white"/>
+    <form class="mx-auto w-25 bg-blur rounded"
+          method="post"
+          action="/products/add-product"
+          th:object="${addProductDTO}"
+    >
+        <div class="form-group">
+            <div class="label-holder textCol d-flex justify-content-center">
+                <label for="name" class="h4 mb-2 text-white">Name</label>
+            </div>
+            <input th:field="*{name}"
+                   th:errorclass="'is-invalid alert-danger'"
+                   type="text"
+                   class="form-control"
+                   id="name"
+                   name="name"/>
+            <small th:if="${#fields.hasErrors('name')}"
+                   th:errors="*{name}"
+                   class="text-danger"> Name error</small>
+        </div>
+        <div class="form-group">
+            <div class="label-holder text-white textCol d-flex justify-content-center">
+                <label for="description" class="h4 mb-2">Description</label>
+            </div>
+            <textarea th:field="*{description}"
+                      th:errorclass="'is-invalid alert-danger'"
+                      type="text"
+                      class="form-control"
+                      id="description"
+                      name="description"></textarea>
+            <small th:if="${#fields.hasErrors('description')}"
+                   th:errors="*{description}"
+                   class="text-danger">Description error message</small>
+        </div>
+        <div class="form-group">
+            <div class="label-holder text-white textCol d-flex justify-content-center">
+                <label for="neededBefore" class="h4 mb-2">Before</label>
+            </div>
+            <input th:field="*{neededBefore}"
+                   th:errorclass="'is-invalid alert-danger'"
+                   type="datetime-local"
+                   class="form-control"
+                   id="neededBefore"
+                   name="neededBefore"/>
+            <small th:if="${#fields.hasErrors('neededBefore')}"
+                   th:errors="*{neededBefore}"
+                   class="text-danger">Needed before date error</small>
+        </div>
+        <div class="form-group">
+            <div class="label-holder text-white textCol d-flex justify-content-center">
+                <label for="price" class="h4 mb-2">Price</label>
+            </div>
+            <input th:field="*{price}"
+                   th:errorclass="'is-invalid alert-danger'"
+                   type="number"
+                   step="0.1"
+                   class="form-control"
+                   id="price"
+                   name="price"/>
+            <small th:if="${#fields.hasErrors('price')}"
+                   th:errors="*{price}"
+                   class="text-danger">Price error message</small>
+        </div>
+        <div class="form-group">
+            <div class="text-white label-holder d-flex justify-content-center">
+                <label for="category" class="h4 mb-2">Category</label>
+            </div>
+            <select th:field="*{category}"
+                    th:errorclass="'is-invalid alert-danger'"
+                    class="browser-default custom-select"
+                    id="category"
+                    name="category">
+                <option value="">Select category</option>
+                <option value="FOOD">Food</option>
+                <option value="DRINK">Drink</option>
+                <option value="HOUSEHOLD">Household</option>
+                <option value="OTHER">Other</option>
+            </select>
+            <small  th:if="${#fields.hasErrors('category')}"
+                    th:errors="*{category}"
+                    class="text-danger">Category error message</small>
+        </div>
+
+        <div class="button-holder d-flex justify-content-center">
+            <button type="submit" class="btn btn-warning  mb-3" value="Register">Add product</button>
+        </div>
+    </form>
+</main>
+
+<footer class="footer bg-transparent  py-2">
+    <div class="container-fluid text-center">
+        <div class="footer-background h5 text-white">
+            &copy; Spring team 2021. All rights reserved.
+        </div>
+    </div>
+</footer>
+</body>
+</html>

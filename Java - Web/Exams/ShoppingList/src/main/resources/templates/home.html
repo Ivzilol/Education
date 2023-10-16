@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Shopping list App</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg bg-nav rounded">
+        <a class="nav-link text-white active h5" href="/">Shopping List App</a>
+        <a class="nav-link text-white active h5" href="/products/add-product">Add Product</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
+            <ul class="navbar-nav row">
+                <li class="nav-item col-md-4">
+                    <a class="nav-link text-white active h5"
+                       href="/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<main>
+    <div class="container bg-blur rounded mt-5 mb-4">
+        <h1>All products to buy</h1>
+        <div class="row mt-3 mb-3">
+            <div class="col-5 bg-dark rounded m-auto" style="height: 30vh; overflow: auto">
+                <h3 class="mySticky bg-gray text-dark rounded">Foods</h3>
+                <div th:each="food : ${foodDTO}"
+                     class="mt-3 rounded badge-info">
+                    <img class="mr-2" src="/img/food.png" alt="Food" width="50px" height="50px">
+                    <span th:text="|Name: ${food.name } Price: ${food.price} lv|"
+                    ></span>
+                    <a class="ml-3 text-danger"
+                       th:href="@{/bought-product/{id}(id=${food.id})}"
+
+                    >Buy</a>
+                </div>
+            </div>
+            <div class="col-5 bg-dark rounded m-auto" style="height: 30vh; overflow: auto">
+                <h3 class="mySticky bg-gray text-dark rounded">Drinks</h3>
+                <div th:each="drink : ${drinksDTO}"
+                     class="mt-3 rounded badge-warning">
+                    <img class="mr-2" src="/img/drink.png" alt="Food" width="50px" height="50px">
+                    <span th:text="|Name: ${drink.name } Price: ${drink.price} lv|"
+                    ></span>
+                    <a class="ml-3 text-danger"
+                       th:href="@{/bought-product/{id}(id=${drink.id})}"
+                    >Buy</a>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3 mb-3">
+            <div class="col-5 bg-dark rounded m-auto" style="height: 30vh; overflow: auto">
+                <h3 class="mySticky bg-gray text-dark rounded">Households</h3>
+                <div th:each="house : ${householdsDTO}"
+                     class="mt-3 rounded badge-success">
+                    <img class="mr-2" src="/img/household.png" alt="Food" width="50px" height="50px">
+                    <span th:text="|Name: ${house.name } Price: ${house.price} lv|"
+                    ></span>
+                    <a class="ml-3 text-danger"
+                       th:href="@{/bought-product/{id}(id=${house.id})}"
+                    >Buy</a>
+                </div>
+            </div>
+            <div class="col-5 bg-dark rounded m-auto" style="height: 30vh; overflow: auto">
+                <h3 class="mySticky bg-gray text-dark rounded">Other</h3>
+                <div th:each="other : ${othersDTO}"
+                     class="mt-3 rounded badge-secondary">
+                    <img class="mr-2" src="/img/other.png" alt="Food" width="50px" height="50px">
+                    <span th:text="|Name: ${other.name } Price: ${other.price} lv|"
+                    ></span>
+                    <a class="ml-3 text-danger"
+                       th:href="@{/bought-product/{id}(id=${other.id})}"
+                    >Buy</a>
+                </div>
+            </div>
+        </div>
+        <a th:text="|Buy all products for ${sumDTO.getSum()} lv|"
+           th:href="@{/bought-all/}"
+           class="btn btn-danger"></a>
+    </div>
+</main>
+<footer class="footer bg-transparent  py-2">
+    <div class="container-fluid text-center">
+        <div class="footer-background h5 text-white">
+            &copy; Spring team 2021. All rights reserved.
+        </div>
+    </div>
+</footer>
+</body>
+</html>
