@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dictionary App</title>
+    <link rel="stylesheet" href="/css/reset-css.css"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg bg-nav rounded ">
+        <a class="nav-link my-text-color active h5 " href="/">Dictionary App</a>
+        <th:block th:if="${@loggedUser.id != null}">
+            <a class="nav-link my-text-color active h5  " href="/words/add-word">Add Word</a>
+        </th:block>
+        <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
+            <ul class="navbar-nav row">
+                <th:block th:if="${@loggedUser.id == null}">
+                    <li class="nav-item col-md-4">
+                        <a class="nav-link active h5 my-text-color" href="/users/login">Login</a>
+                    </li>
+                    <li class="nav-item col-md-4">
+                        <a class="nav-link my-text-color active h5 " href="/users/register">Register</a>
+                    </li>
+                </th:block>
+                <th:block th:if="${@loggedUser.id != null}">
+                    <a th:text="|Welcome, ${@loggedUser.username}|"
+                       class="nav-link h5 my-text-color"></a>
+                    <li class="nav-item col-md-4">
+                        <a class="nav-link my-text-color active h5 " href="/users/logout">Logout</a>
+                    </li>
+                </th:block>
+            </ul>
+        </div>
+    </nav>
+</header>
+<footer class="footer bg-transparent  py-2">
+    <div class="container-fluid text-center">
+        <div class="footer-background h5 my-text-color">
+            &copy; Spring team 2023. All rights reserved.
+        </div>
+    </div>
+</footer>
+</body>
+</html>
