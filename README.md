@@ -1,2 +1,2 @@
 # Education
-Мy ho
+
